@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passeport Francophone - Apprentissage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        
+        body { font-family: 'Poppins', sans-serif; }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .progress-bar { transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+        
+        .logo-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        .logo-placeholder-text {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 min-h-screen text-white flex items-center justify-center p-4">
+
+    <div class="max-w-2xl w-full">
+        <!-- Pantalla de Inicio -->
+        <div id="startScreen" class="fade-in bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 shadow-2xl text-center">
+            
+            <div class="logo-container">
+                <img src="" alt="Logo Colegio" id="schoolLogo" class="max-w-full max-h-full object-contain hidden" onload="this.classList.remove('hidden'); document.getElementById('placeholder-txt').classList.add('hidden')">
+                <div id="placeholder-txt" class="logo-placeholder-text">
+                    LOGO DEL COLEGIO<br>(Subir imagen aquí)
+                </div>
+            </div>
+
+            <h1 class="text-4xl font-bold mb-2">Passeport Francophone</h1>
+            <p class="text-indigo-200 mb-8 italic">"Ta mission diplomatique commence ici."</p>
+            
+            <div class="flex flex-col gap-3">
+                <button onclick="startGame()" class="bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-lg uppercase tracking-wider">
+                    Démarrer la Mission
+                </button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Juego -->
+        <div id="gameScreen" class="hidden fade-in space-y-4">
+            <div class="flex justify-between items-center px-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center overflow-hidden border border-white/10">
+                         <img src="" alt="" class="max-w-full max-h-full object-contain school-logo-mini">
+                         <span class="text-[8px] text-white/40 leading-none text-center font-bold">LOGO</span>
+                    </div>
+                    <div>
+                        <p class="text-xs uppercase tracking-widest text-indigo-300 font-bold leading-none">Expérience</p>
+                        <p id="levelDisplay" class="text-xl font-bold">0 XP</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs uppercase tracking-widest text-red-400 font-bold leading-none">Santé</p>
+                    <p class="text-xl" id="livesDisplay">❤️❤️❤️</p>
+                </div>
+            </div>
+
+            <div class="w-full bg-white/10 rounded-full h-3 overflow-hidden border border-white/10">
+                <div id="progress" class="bg-gradient-to-r from-green-400 to-emerald-500 h-full progress-bar" style="width:0%"></div>
+            </div>
+
+            <div id="card" class="bg-white text-slate-800 rounded-3xl p-8 shadow-2xl transition-all border-b-8 border-indigo-200">
+                <div class="mb-6 flex justify-between items-start">
+                    <div>
+                        <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Destination</span>
+                        <h2 id="countryTitle" class="text-3xl font-black mt-1">---</h2>
+                    </div>
+                    <div class="text-slate-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div id="questionArea" class="space-y-6">
+                    <!-- Contenido dinámico -->
+                </div>
+                
+                <div id="feedback" class="mt-4 h-6 text-center font-bold text-sm hidden"></div>
+            </div>
+
+            <!-- BOTÓN DE REINICIO SIEMPRE PRESENTE -->
+            <div class="flex justify-center pt-4">
+                <button onclick="confirmReset()" class="flex items-center gap-2 text-white/40 hover:text-white/80 transition-all text-xs uppercase tracking-widest font-bold group">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Recommencer la mission
+                </button>
+            </div>
+        </div>
+
+        <!-- Pantalla Final -->
+        <div id="endScreen" class="hidden fade-in bg-white text-slate-900 rounded-3xl p-10 shadow-2xl text-center border-b-8 border-indigo-500">
+            <div id="endIcon" class="text-6xl mb-4 animate-bounce">🎓</div>
+            <h2 id="endTitle" class="text-3xl font-bold mb-2">Diplôme Obtenu !</h2>
+            <p id="finalStats" class="text-slate-500 mb-8 font-medium"></p>
+            <button onclick="location.reload()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-10 rounded-2xl transition-all shadow-lg w-full uppercase tracking-widest">
+                Retour au menu
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación personalizado (para no usar alert/confirm) -->
+    <div id="confirmModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-white text-slate-900 p-8 rounded-3xl max-w-sm w-full shadow-2xl scale-95 transition-transform duration-300">
+            <h3 class="text-xl font-bold mb-2 text-center">Abandonner la mission ?</h3>
+            <p class="text-slate-500 text-center mb-6">Toute ta progression actuelle sera perdue.</p>
+            <div class="flex flex-col gap-2">
+                <button onclick="resetGame()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-colors">Oui, recommencer</button>
+                <button onclick="closeModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 rounded-xl transition-colors">Non, continuer</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+const countriesData = [
+    {country:"France",gender:"F",plural:false,natM:"français",natF:"française"},
+    {country:"Espagne",gender:"F",plural:false,natM:"espagnol",natF:"espagnole"},
+    {country:"Allemagne",gender:"F",plural:false,natM:"allemand",natF:"allemande"},
+    {country:"Italie",gender:"F",plural:false,natM:"italien",natF:"italienne"},
+    {country:"Portugal",gender:"M",plural:false,natM:"portugais",natF:"portugaise"},
+    {country:"Royaume-Uni",gender:"M",plural:false,natM:"britannique",natF:"britannique"},
+    {country:"Belgique",gender:"F",plural:false,natM:"belge",natF:"belge"},
+    {country:"Suisse",gender:"F",plural:false,natM:"suisse",natF:"suisse"},
+    {country:"États-Unis",gender:"M",plural:true,natM:"américain",natF:"américaine"},
+    {country:"Mexique",gender:"M",plural:false,natM:"mexicain",natF:"mexicaine"},
+    {country:"Canada",gender:"M",plural:false,natM:"canadien",natF:"canadienne"},
+    {country:"Maroc",gender:"M",plural:false,natM:"marocain",natF:"marocaine"},
+    {country:"Algérie",gender:"F",plural:false,natM:"algérien",natF:"algérienne"},
+    {country:"Japon",gender:"M",plural:false,natM:"japonais",natF:"japonaise"}
+];
+
+let state = {
+    shuffled: [],
+    index: 0,
+    xp: 0,
+    lives: 3,
+    phase: 0 
+};
+
+const normalize = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+function startGame() {
+    state.xp = 0;
+    state.lives = 3;
+    state.index = 0;
+    state.phase = 0;
+    state.shuffled = shuffle([...countriesData]);
+    
+    document.getElementById('startScreen').classList.add('hidden');
+    document.getElementById('gameScreen').classList.remove('hidden');
+    updateUI();
+    loadQuestion();
+}
+
+function updateUI() {
+    document.getElementById('levelDisplay').innerText = `${state.xp} XP`;
+    document.getElementById('livesDisplay').innerText = "❤️".repeat(state.lives) + "🖤".repeat(3 - state.lives);
+    const progress = (state.index / state.shuffled.length) * 100;
+    document.getElementById('progress').style.width = `${progress}%`;
+}
+
+function loadQuestion() {
+    if (state.index >= state.shuffled.length) return endGame(true);
+    
+    const data = state.shuffled[state.index];
+    document.getElementById('countryTitle').innerText = data.country;
+    const area = document.getElementById('questionArea');
+    area.innerHTML = "";
+
+    if (state.phase === 0) {
+        const correct = data.plural ? "aux" : (data.gender === "F" ? "en" : "au");
+        const options = shuffle([correct, "à", "en", "au", "aux"]).filter((v, i, a) => a.indexOf(v) === i).slice(0, 4);
+        if (!options.includes(correct)) options[0] = correct;
+
+        area.innerHTML = `<p class="text-lg font-medium text-slate-600">Complète la phrase :</p><p class="text-2xl font-bold mb-4">"Je vais <span class="text-indigo-600 underline decoration-indigo-200 underline-offset-4">___</span> ${data.country}"</p>`;
+        const btnGrid = document.createElement('div');
+        btnGrid.className = "grid grid-cols-2 gap-3";
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = "bg-slate-50 hover:bg-indigo-600 hover:text-white p-4 rounded-2xl font-bold transition-all border-b-4 border-slate-200 hover:border-indigo-700 active:border-b-0 active:translate-y-1";
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(opt, correct);
+            btnGrid.appendChild(btn);
+        });
+        area.appendChild(btnGrid);
+    } 
+    else {
+        const isMasc = state.phase === 1;
+        const correct = isMasc ? data.natM : data.natF;
+        const prompt = isMasc ? `Il est ________.` : `Elle est ________.`;
+        
+        area.innerHTML = `
+            <p class="text-lg font-medium text-slate-600">Écris la nationalité (${isMasc ? 'masculin' : 'féminin'}) :</p>
+            <p class="text-2xl font-bold italic text-indigo-900 text-center my-4 bg-indigo-50 py-4 rounded-2xl">"${prompt}"</p>
+            <input id="natInput" autocomplete="off" class="w-full border-2 border-slate-200 p-4 rounded-2xl text-center text-xl font-bold focus:border-indigo-500 outline-none transition-colors" placeholder="Réponse ici...">
+            <button onclick="processInput('${correct}')" class="w-full bg-slate-800 text-white p-4 mt-2 rounded-2xl font-bold hover:bg-slate-700 transition-all shadow-lg">Valider</button>
+        `;
+        const input = document.getElementById('natInput');
+        input.focus();
+        input.onkeypress = (e) => { if(e.key === 'Enter') processInput(correct) };
+    }
+}
+
+function checkAnswer(chosen, correct) {
+    if (normalize(chosen) === normalize(correct)) {
+        showFeedback(true);
+        state.xp += 10;
+        nextPhase();
+    } else {
+        showFeedback(false, correct);
+        loseLife();
+    }
+}
+
+function processInput(correct) {
+    const input = document.getElementById('natInput').value;
+    if(!input.trim()) return;
+    checkAnswer(input, correct);
+}
+
+function showFeedback(isCorrect, answer) {
+    const fb = document.getElementById('feedback');
+    const card = document.getElementById('card');
+    fb.classList.remove('hidden', 'text-green-600', 'text-red-600');
+    fb.classList.add(isCorrect ? 'text-green-600' : 'text-red-600');
+    fb.innerText = isCorrect ? "Excellent ! +10 XP" : `Oups ! La réponse était : ${answer}`;
+    
+    if (!isCorrect) {
+        card.classList.add('shake');
+        setTimeout(() => card.classList.remove('shake'), 500);
+    }
+}
+
+function nextPhase() {
+    state.phase++;
+    if (state.phase > 2) {
+        state.phase = 0;
+        state.index++;
+    }
+    setTimeout(() => {
+        document.getElementById('feedback').classList.add('hidden');
+        updateUI();
+        loadQuestion();
+    }, 1200);
+}
+
+function loseLife() {
+    state.lives--;
+    updateUI();
+    if (state.lives <= 0) {
+        setTimeout(() => endGame(false), 500);
+    }
+}
+
+function confirmReset() {
+    const modal = document.getElementById('confirmModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeModal() {
+    const modal = document.getElementById('confirmModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+function endGame(win) {
+    document.getElementById('gameScreen').classList.add('hidden');
+    document.getElementById('endScreen').classList.remove('hidden');
+    
+    document.getElementById('endIcon').innerText = win ? "🎓" : "❌";
+    document.getElementById('endTitle').innerText = win ? "Mission Réussie !" : "Mission Échouée";
+    document.getElementById('finalStats').innerText = `Tu as terminé avec un score total de ${state.xp} XP.`;
+}
+
+function resetGame() {
+    location.reload();
+}
+</script>
+</body>
+</html>
