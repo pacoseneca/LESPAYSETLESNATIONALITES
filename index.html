@@ -15,6 +15,7 @@
         .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
         
+        /* Contenedor principal del logo en la Home */
         .logo-container {
             width: 150px;
             height: 150px;
@@ -34,6 +35,17 @@
             border: 1px dashed rgba(255, 255, 255, 0.2);
             border-radius: 0.5rem;
         }
+
+        /* Estilo para el mini contenedor del logo en el juego (sin recuadro) */
+        .mini-logo-wrapper {
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent; /* Eliminado el fondo gris */
+            border: none; /* Eliminado el borde */
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 min-h-screen text-white flex items-center justify-center p-4">
@@ -43,7 +55,6 @@
         <div id="startScreen" class="fade-in bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 shadow-2xl text-center">
             
             <div class="logo-container">
-                <!-- Cuando cargues la imagen aquí, se verá también en el juego -->
                 <img src="seneca.png" alt="Logo Colegio" id="schoolLogo" class="max-w-full max-h-full object-contain hidden" onload="syncLogos(this)">
                 <div id="placeholder-txt" class="logo-placeholder-text">
                     LOGO DEL COLEGIO<br>(Subir imagen aquí)
@@ -64,8 +75,8 @@
         <div id="gameScreen" class="hidden fade-in space-y-4">
             <div class="flex justify-between items-center px-2">
                 <div class="flex items-center gap-3">
-                    <!-- Mini logo corregido -->
-                    <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center overflow-hidden border border-white/10">
+                    <!-- Mini logo sin recuadro innecesario -->
+                    <div class="mini-logo-wrapper">
                          <img src="" alt="" id="schoolLogoMini" class="max-w-full max-h-full object-contain hidden">
                          <span id="mini-placeholder-txt" class="text-[10px] text-white/40 leading-none text-center font-bold">LOGO</span>
                     </div>
